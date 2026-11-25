@@ -70,9 +70,9 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            bison build-essential ca-certificates ccache clang-18 clang-21 cmake file flex fonts-dejavu-core \
+            bison bsdextrautils build-essential ca-certificates ccache clang-18 clang-21 cmake file flex fonts-dejavu-core \
             git glslang-tools lld-18 lld-21 llvm-21 make ninja-build pkg-config python3 \
-            python3-mako python3-numpy python3-pil python3-yaml spirv-tools unzip wget xz-utils
+            python3-mako python3-numpy python3-pil python3-yaml spirv-tools unzip wget xz-utils zstd
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           toolchain=$(dpkg-query -W -f='${Package}=${Version}\n' \
             gcc g++ clang-18 clang-21 lld-18 lld-21 glslang-tools spirv-tools | sha256sum | cut -d ' ' -f 1)
@@ -92,6 +92,11 @@ jobs:
 
       - name: Build the pinned boilerplate runtime and host tools
         run: python3 tools/fetch_build_inputs.py --only app_template --github-env
+
+      - name: Check the PS5 compiler and archiver
+        run: |
+          "$PS5_PAYLOAD_SDK/bin/prospero-clang" --version
+          "$PS5_PAYLOAD_SDK/bin/prospero-ar" --version
 
       - name: Restore the pinned Vulkan SDK and public shaders
         id: driver-cache
