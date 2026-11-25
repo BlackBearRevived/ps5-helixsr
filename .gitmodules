@@ -1,4 +1,3 @@
 [submodule "external/ps5-vulkan"]
 	path = external/ps5-vulkan
-	url = https://github.com/blackbearreloaded/ps5-vulkan.git
-	branch = helixsr-diagnostic-profile
+	url = https://github.com/mpereiraesaa/ps5-vulkan.git

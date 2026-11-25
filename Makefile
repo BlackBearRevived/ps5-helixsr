@@ -6,9 +6,9 @@
 PYTHON ?= python3
 CC ?= cc
 DRIVER ?= external/ps5-vulkan
-DRIVER_URL ?= https://github.com/blackbearreloaded/ps5-vulkan.git
-# The driver revision this checkout pins (its submodule commit); empty outside git.
-DRIVER_REV ?= $(shell git ls-tree HEAD $(DRIVER) 2>/dev/null | awk '{print $$3}')
+DRIVER_URL ?= https://github.com/mpereiraesaa/ps5-vulkan.git
+# The submodule revision, with the same pin for GitHub source archives.
+DRIVER_REV ?= $(or $(shell git ls-tree HEAD $(DRIVER) 2>/dev/null | awk '{print $$3}'),6875f21438b7e51a1377a30f2d7f77b3e0154cd6)
 # The driver profile HelixSR needs: 16-bit integers, the three subgroup operations of the
 # generated kernels, RG16F and R16F storage images and the refresh of sampled inputs.
 DRIVER_PROFILE = PS5VK_HELIXSR_DIAGNOSTIC=1 PS5VK_EXTENDED_COMPUTE_DIAGNOSTIC=1
@@ -30,7 +30,7 @@ VULKAN_ICD ?= /usr/share/vulkan/icd.d/lvp_icd.json
 VULKAN_LIBRARY ?= /usr/lib/x86_64-linux-gnu/libvulkan.so.1
 
 .PHONY: all inputs driver driver-source driver-headers driver-deps driver-psbc driver-sdk compile-probe \
-	model shaders network-files host check check-offline check-shaders runner showcase
+	model shaders compact-shaders network-files host check check-offline check-shaders runner showcase
 all: shaders host
 
 # Pinned public inputs into build/inputs; eval "$$(python3 tools/fetch_build_inputs.py --env)"
@@ -43,11 +43,12 @@ inputs:
 driver-source: $(DRIVER)/Makefile
 $(DRIVER)/Makefile:
 	@if [ -n "$(DRIVER_REV)" ] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
-		git submodule update --init -- $(DRIVER); \
+		git submodule update --init --depth 1 -- $(DRIVER); \
 	else \
 		rmdir $(DRIVER) 2>/dev/null || true; \
-		git clone $(DRIVER_URL) $(DRIVER) && \
-		{ [ -z "$(DRIVER_REV)" ] || git -C $(DRIVER) checkout -q $(DRIVER_REV); }; \
+		git clone --depth 1 $(DRIVER_URL) $(DRIVER) && \
+		{ [ -z "$(DRIVER_REV)" ] || { git -C $(DRIVER) fetch --depth 1 origin $(DRIVER_REV) && \
+			git -C $(DRIVER) checkout -q FETCH_HEAD; }; }; \
 	fi
 driver-headers: | $(DRIVER)/Makefile
 	$(MAKE) -C $(DRIVER) vulkan-headers
@@ -96,6 +97,10 @@ build/helixsr_graph:
 shaders: build/helixsr_graph build/compile_probe
 	$(PYTHON) tools/build_generated.py --setup $(HELIXSR_RELEASE)/setup --ptx $(PTX) --dxc $(DXC) \
 		--spirv-opt $(SPIRV_OPT) --compiler build/compile_probe --graph build/helixsr_graph --out $(GENERATED)
+	$(MAKE) compact-shaders
+
+# Public-source shaders for the showcase, independent of the local DLSS setup.
+compact-shaders: build/compile_probe
 	$(PYTHON) tools/build_compact_resident.py --dxc $(DXC) --compiler build/compile_probe --out $(RESIDENT)
 
 # The two files an application built without the network needs beside it: the weights and

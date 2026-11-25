@@ -1,5 +1,7 @@
 # PS5 HelixSR
 
+[![Build](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml)
+
 [![PS5 HelixSR Showcase: HelixSR beside a bilinear upscale of the same frame](docs/images/ps5-helixsr-showcase.png)](examples/helixsr_showcase/README.md)
 
 *The [showcase app](examples/helixsr_showcase/README.md) on a PS5, upscaling
@@ -8,11 +10,11 @@ resolution chart four times: HelixSR on the left, a bilinear upscale of the same
 frame on the right.*
 
 > [!WARNING]
-> **Experimental, source only: you bring NVIDIA's DLSS DLL.** HelixSR runs
+> **Experimental. Running HelixSR requires your own copy of NVIDIA's DLSS DLL.** HelixSR runs
 > natively on the PS5 and passes its acceptance against the original HelixSR in
 > every scenario, at 1080p, 1440p and 4K. The network it runs is NVIDIA's, so
-> this repository holds no weights and no kernels and publishes no binaries.
-> You build it yourself: the build makes the network's two files on your
+> the showcase from GitHub Actions starts in bilinear mode. Build the network's
+> two files on your
 > machine from NVIDIA's own `nvngx_dlss.dll`, as HelixSR does
 > ([how to build](BUILDING.md)). The runtime needs a diagnostic profile of the
 > Vulkan driver.
@@ -28,9 +30,9 @@ frame on the right.*
 
 A **native PS5 runtime for HelixSR**: NVIDIA's DLSS Model E network running on
 Vulkan compute, for PS5 homebrew. The Vulkan driver is the
-[`external/ps5-vulkan`](external/ps5-vulkan) submodule: BlackBearReloaded's fork
-of [Manuel Pereira's ps5-vulkan](https://github.com/mpereiraesaa/ps5-vulkan).
-It is the sibling of [ps5-fsr4](https://github.com/blackbearreloaded/ps5-fsr4),
+[`external/ps5-vulkan`](external/ps5-vulkan) submodule, pinned to BlackBearReloaded's
+diagnostic revision of [Manuel Pereira's ps5-vulkan](https://github.com/mpereiraesaa/ps5-vulkan).
+It is the sibling of `ps5-fsr4`,
 with the same showcase app, so the two upscalers can be set side by side.
 
 **Status:** Experimental.
@@ -74,7 +76,7 @@ it submits 300 frames back to back and times each from submission to completion
 on the GPU. Running at 60 fps the app measures about the same at 1080p and
 1440p, and 5.4 ms at 4K. *Benchmark the six scenarios* in its settings times
 each case on any console and shows it beside this table. The last column is
-[ps5-fsr4](https://github.com/blackbearreloaded/ps5-fsr4#performance)'s own
+the `ps5-fsr4` project's own
 table, measured the same way by its headless benchmark.
 
 The early convolutions multiply and add in two operations, so that the console
@@ -164,8 +166,16 @@ network. This project takes it from there:
 | `docs/` | The runtime guide, the early convolution stages, the performance chart |
 | `external/ps5-vulkan/` | The Vulkan driver (submodule) |
 
-Clone with `git clone --recurse-submodules`, or let `make` fetch the driver, then
-follow [BUILDING.md](BUILDING.md).
+## Build or run the showcase
+
+On a successful `main` build, download **ps5-helixsr-showcase-PPSA99013** from
+[GitHub Actions](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml).
+Unpack the Actions download, verify `PPSA99013.zip` using `sha256sum --check
+PPSA99013.zip.sha256`, and extract that ZIP. Copy the `PPSA99013` folder to
+`/data/homebrew/` on a PS5 configured for native homebrew and launch **PS5
+HelixSR Showcase**. The app starts in bilinear mode until you supply compatible
+network files made locally. See [BUILDING.md](BUILDING.md) for the full setup
+and the [showcase README](examples/helixsr_showcase/README.md) for controls.
 
 ## Development
 

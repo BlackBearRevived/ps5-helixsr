@@ -1,9 +1,9 @@
 # Building HelixSR for PS5
 
-There is nothing to download: you build the app, and you bring NVIDIA's DLSS
-DLL, from which the build makes the network on your machine. Everything is
-built on Linux (WSL works). Nothing made from the DLL is stored in this
-repository; it stays in the ignored `build/` tree.
+Build on Linux or WSL. The [GitHub Actions showcase ZIP](#showcase-with-public-inputs)
+can run in bilinear mode. To enable HelixSR, generate the network on your
+machine using your own NVIDIA DLSS DLL. Generated network files stay under the
+ignored `build/` tree.
 
 ## In short
 
@@ -17,7 +17,7 @@ repository; it stays in the ignored `build/` tree.
 3. Run:
 
    ```sh
-   git clone --recurse-submodules https://github.com/blackbearreloaded/ps5-helixsr.git
+   git clone --recurse-submodules --shallow-submodules https://github.com/BlackBearRedux/ps5-helixsr.git
    cd ps5-helixsr
    make inputs                                   # pinned public inputs: app template, payload SDK, DXC, HelixSR release
    eval "$(python3 tools/fetch_build_inputs.py --env)"
@@ -37,12 +37,14 @@ not upload it, attach it or pass it on.
 
 ## Requirements
 
-- Python 3.11+ with NumPy and Pillow, CMake, a C and C++17 compiler, `make`,
+- Ubuntu 26.04 provides the `glslangValidator` and SPIRV-Tools versions used in CI.
+  Install Python 3.11+ with NumPy and Pillow, CMake, a C and C++17 compiler, `make`,
   `glslangValidator` and SPIRV-Tools (`spirv-opt`, `spirv-val`), DejaVu Sans
   (`fonts-dejavu-core`) for the showcase; Mako and PyYAML for the driver's
   shader compiler. The workflow's install step lists the Ubuntu packages.
 - `make inputs` fetches the pinned public inputs of `tools/build_inputs.json`
-  into `build/inputs`: the native app template with its payload SDK, Microsoft's
+  into `build/inputs`: [PS5 Native App Boilerplate 1.000.000](https://github.com/BlackBearRedux/ps5-native-app-boilerplate/releases/tag/1.000.000)
+  with its payload SDK, Microsoft's
   DXC and the HelixSR 1.2.0 release. Then
   `eval "$(python3 tools/fetch_build_inputs.py --env)"` points the PS5 builds
   at them (`PS5_PAYLOAD_SDK`, `PS5_NATIVE_APP_TEMPLATE`, `PS5VK_LAB_ROOT`).
@@ -63,6 +65,7 @@ The targets, in order (the first six are the steps above):
 | `make driver` | driver dependencies, the PSBC shader compiler (PS5 and host), the driver SDK with the HelixSR profile |
 | `make model DLSS_DLL=...` | HelixSR's setup: the weights and the kernels' PTX |
 | `make shaders` | the runtime's SPIR-V, each module compiled with the PS5 compiler as a check |
+| `make compact-shaders` | the public-source shaders needed to build the showcase |
 | `make network-files` | `model.bin` and `kernels.bin`, the two files the app reads |
 | `make showcase` | the app, PPSA99013; it builds without the network and takes the two files as options |
 | `make host` | the runtime, the frame runners and the tests for desktop Vulkan |
@@ -101,9 +104,30 @@ The driver's own `make check` restages its SDK without this profile; run
 
 `make check-offline` builds and runs only what needs neither Vulkan nor the
 model: the planner, the numerics, the contracts and the showcase's tables.
-`make check-shaders` compiles the shaders written here, the early convolutions
-and the showcase's. GitHub Actions runs both on pull requests and when started
-by hand; it builds nothing of NVIDIA's.
+`make check-shaders` compiles the early convolutions and the showcase shaders.
+GitHub Actions runs both checks and builds the native showcase on pushes to
+`main`, pull requests, manually, and nightly at 05:53 UTC. Builds on `main`
+save the pinned Vulkan SDK and compact shaders in a cache keyed by the driver,
+toolchain, and shader inputs. The nightly build keeps the shared cache in use.
+
+## Showcase with public inputs
+
+From a fresh clone, run:
+
+```sh
+python3 tools/fetch_build_inputs.py --only app_template --only dxc
+eval "$(python3 tools/fetch_build_inputs.py --env)"
+make driver compact-shaders showcase
+python3 "$PS5_NATIVE_APP_TEMPLATE/tools/package-app.py" \
+  build/showcase/PPSA99013 build/showcase/PPSA99013.zip
+```
+
+CI uses the same commands and checks the packaged file list. The downloadable
+ZIP and SHA-256 checksum are Actions artifacts from push, pull request, and
+manual runs. Public push and manual builds attest the ZIP. Verify it with
+`gh attestation verify PPSA99013.zip -R BlackBearRedux/ps5-helixsr`.
+With these inputs the app presents its bilinear comparison. The full build at
+the top of this guide also produces the two local files that enable HelixSR.
 
 ## Running on the host
 
@@ -143,6 +167,6 @@ Both are built against the staged driver SDK and need `PS5_PAYLOAD_SDK` and
   writes each output frame, times the upscaler and profiles every step, then
   closes itself. It is the PS5 side of the [acceptance](VALIDATION.md).
 
-A title folder built with `--model` carries NVIDIA's weights, and every title
-carries the generated kernels: build them for your own console and do not pass
-them on.
+The frame runner embeds network files. The showcase includes them only when
+you pass `--model` and `--kernels`. Keep folders containing these files on your
+own machines and console.

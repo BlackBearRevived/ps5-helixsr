@@ -124,20 +124,13 @@ def extract_release(archive, path):
 
 
 def build_template(path):
-    """The template's payload SDK, generated libc.prx and host tool, from its own scripts.
-
-    Its sample app is not built: at the pinned commit, LLVM 21's lld leaves that small
-    image without the .data.rel.ro section the tool requires.
-    """
+    """Prepare the payload SDK and use the template's runtime and host-tool build."""
     tool = path / "build/host/ps5-native-tool"
     needed = [tool, path / "runtime/libc.prx", path / ".deps/native/ps5-payload-sdk/bin/prospero-clang"]
     if not all(p.is_file() for p in needed):
         print("building the native app template's SDK, runtime and tool", flush=True)
         subprocess.run(["bash", "tools/setup-native-dependencies.sh"], cwd=path, check=True)
         subprocess.run(["make", "-C", str(path), "runtime/libc.prx"], check=True)
-        # rebuild-libc.sh compiles the tool as tools/build.sh does, into its work folder.
-        tool.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(path / "build/runtime-shim/ps5-native-tool", tool)
     missing = [str(p) for p in needed if not p.is_file()]
     if missing:
         raise SystemExit("the native app template build did not produce " + ", ".join(missing))

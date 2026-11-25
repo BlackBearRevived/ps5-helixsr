@@ -9,7 +9,7 @@ and presents it at 60 fps. A settings menu changes the render and output sizes,
 compares HelixSR with a bilinear upscale and with native rendering, and measures
 the upscaler on the console it runs on.
 
-It is the [PS5 FSR4 Showcase](https://github.com/blackbearreloaded/ps5-fsr4/tree/main/examples/fsr4_showcase)
+It is based on the PS5 FSR4 Showcase
 with the upscaler replaced: the same scene, camera shots, menu and benchmark,
 so the two can be set side by side. What FSR 4 has and HelixSR has not, RCAS
 sharpening and a render size that changes every frame, is gone from the menu.
@@ -25,6 +25,14 @@ sharpening and a render size that changes every frame, is gone from the menu.
 
 All of them are frames of the app's self-test on a PS5, saved from the buffer
 it presents.
+
+## Build or install
+
+The app uses the runtime, startup code and folder packager from
+[PS5 Native App Boilerplate](https://github.com/BlackBearRedux/ps5-native-app-boilerplate)
+at the release pinned in [`tools/build_inputs.json`](../../tools/build_inputs.json).
+See [the build guide](../../BUILDING.md#showcase-with-public-inputs) to build it
+locally or use the [latest successful GitHub Actions build](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml?query=branch%3Amain+is%3Asuccess).
 
 ## The network is not in the app
 

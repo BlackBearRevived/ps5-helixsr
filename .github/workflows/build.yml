@@ -1,25 +1,27 @@
 # Copyright (C) 2026 BlackBearReloaded
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
-# Checks what needs nothing of NVIDIA's: the planner, the numerics, the contracts, the
-# showcase's tables, and the shaders written here. The network itself is built only on a
-# developer's machine from NVIDIA's DLSS DLL (BUILDING.md); this workflow never fetches it
-# and builds no title. Runs on pull requests and when started by hand.
+# Builds and tests the host code and the PS5 showcase with public inputs.
 name: Build
 
 on:
+  push:
+    branches: [main]
   pull_request:
+  schedule:
+    - cron: '53 5 * * *'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+  group: build-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
+    name: Host tests and shader checks
     runs-on: ubuntu-latest
     # The toolchain the project is developed with: the same glslang and SPIRV-Tools releases.
     container: ubuntu:26.04
@@ -31,9 +33,9 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             build-essential ca-certificates cmake git glslang-tools make python3 python3-numpy \
             python3-pil spirv-tools fonts-dejavu-core
-          git config --global --add safe.directory '*'
-
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Tools compile
         run: python3 -m compileall -q tools tests
@@ -50,3 +52,107 @@ jobs:
           test "$(stat -c %s /tmp/signs.bin)" = 8388608
           python3 tools/build_perf_charts.py
           git diff --exit-code docs/perf
+
+  showcase:
+    name: Build the PS5 showcase (PPSA99013)
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Install native and shader build tools
+        id: toolchain
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            bison build-essential ca-certificates clang-18 clang-21 cmake file flex fonts-dejavu-core \
+            git glslang-tools lld-18 lld-21 llvm-21 make ninja-build pkg-config python3 \
+            python3-mako python3-numpy python3-pil python3-yaml spirv-tools unzip wget xz-utils
+          toolchain=$(dpkg-query -W -f='${Package}=${Version}\n' \
+            gcc g++ clang-18 clang-21 lld-18 lld-21 glslang-tools spirv-tools | sha256sum | cut -d ' ' -f 1)
+          echo "key=$toolchain" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Fetch the pinned Vulkan driver
+        id: driver
+        run: |
+          git submodule update --init --depth 1 -- external/ps5-vulkan
+          revision=$(git -C external/ps5-vulkan rev-parse HEAD)
+          echo "Vulkan driver revision $revision"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch the public boilerplate and DXC
+        run: python3 tools/fetch_build_inputs.py --only app_template --only dxc --github-env
+
+      - name: Restore the pinned Vulkan SDK and public shaders
+        id: driver-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            external/ps5-vulkan/dist-sdk
+            build/compact-resident
+          key: helixsr-native-v1-${{ runner.arch }}-${{ steps.toolchain.outputs.key }}-${{ steps.driver.outputs.revision }}-${{ hashFiles('Makefile', 'tools/build_inputs.json', 'tools/build_compact_resident.py', 'tools/compile_probe.c', 'tools/conv_kernels.py', 'shaders/**', 'third_party/helixsr/common/fp16.h', 'validation/compact-resident.json') }}
+
+      - name: Build the Vulkan SDK and public shaders
+        if: steps.driver-cache.outputs.cache-hit != 'true'
+        run: make driver compact-shaders
+
+      - name: Build and package the showcase without network files
+        shell: bash
+        run: |
+          make showcase
+          app=build/showcase/PPSA99013
+          python3 - "$app" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          app = Path(sys.argv[1])
+          expected = {
+              'assets/signs.bin', 'eboot.bin', 'sce_module/libc.prx', 'sce_sys/icon0.png',
+              'sce_sys/param.json', 'sce_sys/pic0.dds', 'sce_sys/pic1.dds', 'sce_sys/snd0.at9',
+          }
+          actual = {path.relative_to(app).as_posix() for path in app.rglob('*') if path.is_file()}
+          assert actual == expected, f'unexpected or missing showcase files: {actual ^ expected}'
+          assert all((app / path).stat().st_size > 0 for path in expected)
+          metadata = json.loads((app / 'sce_sys/param.json').read_text())
+          assert metadata['titleId'] == app.name
+          assert metadata['localizedParameters']['en-US']['titleName'] == 'PS5 HelixSR Showcase'
+          PY
+          python3 "$PS5_NATIVE_APP_TEMPLATE/tools/package-app.py" "$app" build/showcase/PPSA99013.zip
+          cd build/showcase
+          sha256sum PPSA99013.zip > PPSA99013.zip.sha256
+          sha256sum --check PPSA99013.zip.sha256
+
+      - name: Save the shared cache from main
+        if: github.ref == 'refs/heads/main' && steps.driver-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            external/ps5-vulkan/dist-sdk
+            build/compact-resident
+          key: ${{ steps.driver-cache.outputs.cache-primary-key }}
+
+      - name: Attest the showcase ZIP
+        if: github.event_name != 'pull_request' && github.event_name != 'schedule'
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: build/showcase/PPSA99013.zip
+
+      - name: Upload the showcase ZIP and checksum
+        if: github.event_name != 'schedule'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ps5-helixsr-showcase-PPSA99013
+          path: |
+            build/showcase/PPSA99013.zip
+            build/showcase/PPSA99013.zip.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7

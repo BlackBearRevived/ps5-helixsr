@@ -56,8 +56,7 @@ Build them for your own use. Do not commit them, and do not pass them on.
 
 ## The Vulkan driver
 
-`external/ps5-vulkan` is a git submodule:
-[BlackBearReloaded's fork](https://github.com/blackbearreloaded/ps5-vulkan) of
+`external/ps5-vulkan` is a git submodule pinned to BlackBearReloaded's diagnostic revision of
 [Manuel Pereira's ps5-vulkan](https://github.com/mpereiraesaa/ps5-vulkan),
 licensed `GPL-3.0-or-later`. Its own `LICENSING.md` covers its dependencies and
 derived sources. Programs linked with the staged SDK (`libps5vk.a`,
@@ -66,7 +65,7 @@ derived sources. Programs linked with the staged SDK (`libps5vk.a`,
 ## The showcase
 
 `examples/helixsr_showcase` is the PS5 FSR4 Showcase of
-[ps5-fsr4](https://github.com/blackbearreloaded/ps5-fsr4) (BlackBearReloaded,
+`ps5-fsr4` (BlackBearReloaded,
 `GPL-3.0-or-later`) with the upscaler replaced; its music is that app's. The
 HUD and the signs use DejaVu Sans, rasterized at build time from the system
 font under the Bitstream Vera license.
@@ -77,7 +76,7 @@ Fetched or installed, never stored here:
 
 - [PS5 Payload SDK](https://github.com/ps5-payload-dev/sdk) by John Törnblom
   (ps5-payload-dev), through the
-  [native app template](https://github.com/blackbearreloaded/ps5-native-app-boilerplate);
+  [native app template](https://github.com/BlackBearRedux/ps5-native-app-boilerplate);
 - Microsoft's [DirectX Shader Compiler](https://github.com/microsoft/DirectXShaderCompiler)
   (University of Illinois/NCSA and MIT licenses), glslang and SPIRV-Tools
   (Khronos, Apache 2.0);
