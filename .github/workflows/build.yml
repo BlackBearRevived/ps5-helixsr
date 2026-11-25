@@ -70,7 +70,7 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            bison build-essential ca-certificates clang-18 clang-21 cmake file flex fonts-dejavu-core \
+            bison build-essential ca-certificates ccache clang-18 clang-21 cmake file flex fonts-dejavu-core \
             git glslang-tools lld-18 lld-21 llvm-21 make ninja-build pkg-config python3 \
             python3-mako python3-numpy python3-pil python3-yaml spirv-tools unzip wget xz-utils
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -90,8 +90,8 @@ jobs:
           echo "Vulkan driver revision $revision"
           echo "revision=$revision" >> "$GITHUB_OUTPUT"
 
-      - name: Fetch the public boilerplate and DXC
-        run: python3 tools/fetch_build_inputs.py --only app_template --only dxc --github-env
+      - name: Build the pinned boilerplate runtime and host tools
+        run: python3 tools/fetch_build_inputs.py --only app_template --github-env
 
       - name: Restore the pinned Vulkan SDK and public shaders
         id: driver-cache
@@ -104,7 +104,9 @@ jobs:
 
       - name: Build the Vulkan SDK and public shaders
         if: steps.driver-cache.outputs.cache-hit != 'true'
-        run: make driver compact-shaders
+        run: |
+          python3 tools/fetch_build_inputs.py --only dxc
+          make driver compact-shaders
 
       - name: Build and package the showcase without network files
         shell: bash

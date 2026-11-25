@@ -41,7 +41,8 @@ not upload it, attach it or pass it on.
   Install Python 3.11+ with NumPy and Pillow, CMake, a C and C++17 compiler, `make`,
   `glslangValidator` and SPIRV-Tools (`spirv-opt`, `spirv-val`), DejaVu Sans
   (`fonts-dejavu-core`) for the showcase; Mako and PyYAML for the driver's
-  shader compiler. The workflow's install step lists the Ubuntu packages.
+  shader compiler. The PS5 build uses Clang and LLD 18 and 21. The boilerplate
+  uses Ninja and ccache. The workflow's install step lists the Ubuntu packages.
 - `make inputs` fetches the pinned public inputs of `tools/build_inputs.json`
   into `build/inputs`: [PS5 Native App Boilerplate 1.000.000](https://github.com/BlackBearRedux/ps5-native-app-boilerplate/releases/tag/1.000.000)
   with its payload SDK, Microsoft's
@@ -109,6 +110,7 @@ GitHub Actions runs both checks and builds the native showcase on pushes to
 `main`, pull requests, manually, and nightly at 05:53 UTC. Builds on `main`
 save the pinned Vulkan SDK and compact shaders in a cache keyed by the driver,
 toolchain, and shader inputs. The nightly build keeps the shared cache in use.
+A cache hit also skips the DXC download.
 
 ## Showcase with public inputs
 
