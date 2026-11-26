@@ -1,6 +1,6 @@
 # PS5 HelixSR
 
-[![Build](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml)
+[![Build](https://github.com/BlackBearRevived/ps5-helixsr/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BlackBearRevived/ps5-helixsr/actions/workflows/build.yml)
 
 [![PS5 HelixSR Showcase: HelixSR beside a bilinear upscale of the same frame](docs/images/ps5-helixsr-showcase.png)](examples/helixsr_showcase/README.md)
 
@@ -169,7 +169,7 @@ network. This project takes it from there:
 ## Build or run the showcase
 
 On a successful `main` build, download **ps5-helixsr-showcase-PPSA99013** from
-[GitHub Actions](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml).
+[GitHub Actions](https://github.com/BlackBearRevived/ps5-helixsr/actions/workflows/build.yml).
 Unpack the Actions download, verify `PPSA99013.zip` using `sha256sum --check
 PPSA99013.zip.sha256`, and extract that ZIP. Copy the `PPSA99013` folder to
 `/data/homebrew/` on a PS5 configured for native homebrew and launch **PS5

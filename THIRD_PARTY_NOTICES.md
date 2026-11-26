@@ -76,7 +76,7 @@ Fetched or installed, never stored here:
 
 - [PS5 Payload SDK](https://github.com/ps5-payload-dev/sdk) by John Törnblom
   (ps5-payload-dev), through the
-  [native app template](https://github.com/BlackBearRedux/ps5-native-app-boilerplate);
+  [native app template](https://github.com/BlackBearRevived/ps5-native-app-boilerplate);
 - Microsoft's [DirectX Shader Compiler](https://github.com/microsoft/DirectXShaderCompiler)
   (University of Illinois/NCSA and MIT licenses), glslang and SPIRV-Tools
   (Khronos, Apache 2.0);

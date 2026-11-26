@@ -29,10 +29,10 @@ it presents.
 ## Build or install
 
 The app uses the runtime, startup code and folder packager from
-[PS5 Native App Boilerplate](https://github.com/BlackBearRedux/ps5-native-app-boilerplate)
+[PS5 Native App Boilerplate](https://github.com/BlackBearRevived/ps5-native-app-boilerplate)
 at the release pinned in [`tools/build_inputs.json`](../../tools/build_inputs.json).
 See [the build guide](../../BUILDING.md#showcase-with-public-inputs) to build it
-locally or use the [latest successful GitHub Actions build](https://github.com/BlackBearRedux/ps5-helixsr/actions/workflows/build.yml?query=branch%3Amain+is%3Asuccess).
+locally or use the [latest successful GitHub Actions build](https://github.com/BlackBearRevived/ps5-helixsr/actions/workflows/build.yml?query=branch%3Amain+is%3Asuccess).
 
 ## The network is not in the app
 

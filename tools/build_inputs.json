@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "app_template": {
-    "repository": "https://github.com/BlackBearRedux/ps5-native-app-boilerplate.git",
-    "commit": "f5b6c9708351b35d1987e43c2ee8103daeadce57",
+    "repository": "https://github.com/BlackBearRevived/ps5-native-app-boilerplate.git",
+    "commit": "c7102ddd1a31ec2f3e2c9c6a3490491bef4d0af0",
     "path": "build/inputs/lab/third_party/ps5-native-app-boilerplate"
   },
   "dxc": {

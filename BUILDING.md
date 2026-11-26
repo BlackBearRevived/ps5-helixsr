@@ -17,7 +17,7 @@ ignored `build/` tree.
 3. Run:
 
    ```sh
-   git clone --recurse-submodules --shallow-submodules https://github.com/BlackBearRedux/ps5-helixsr.git
+   git clone --recurse-submodules --shallow-submodules https://github.com/BlackBearRevived/ps5-helixsr.git
    cd ps5-helixsr
    make inputs                                   # pinned public inputs: app template, payload SDK, DXC, HelixSR release
    eval "$(python3 tools/fetch_build_inputs.py --env)"
@@ -44,7 +44,7 @@ not upload it, attach it or pass it on.
   shader compiler. The PS5 build uses Clang and LLD 18 and 21. The boilerplate
   uses Ninja and ccache. The workflow's install step lists the Ubuntu packages.
 - `make inputs` fetches the pinned public inputs of `tools/build_inputs.json`
-  into `build/inputs`: [PS5 Native App Boilerplate 1.000.000](https://github.com/BlackBearRedux/ps5-native-app-boilerplate/releases/tag/1.000.000)
+  into `build/inputs`: [PS5 Native App Boilerplate 1.000.000](https://github.com/BlackBearRevived/ps5-native-app-boilerplate/releases/tag/1.000.000)
   with its payload SDK, Microsoft's
   DXC and the HelixSR 1.2.0 release. Then
   `eval "$(python3 tools/fetch_build_inputs.py --env)"` points the PS5 builds
@@ -127,7 +127,7 @@ python3 "$PS5_NATIVE_APP_TEMPLATE/tools/package-app.py" \
 CI uses the same commands and checks the packaged file list. The downloadable
 ZIP and SHA-256 checksum are Actions artifacts from push, pull request, and
 manual runs. Public push and manual builds attest the ZIP. Verify it with
-`gh attestation verify PPSA99013.zip -R BlackBearRedux/ps5-helixsr`.
+`gh attestation verify PPSA99013.zip -R BlackBearRevived/ps5-helixsr`.
 With these inputs the app presents its bilinear comparison. The full build at
 the top of this guide also produces the two local files that enable HelixSR.
 
