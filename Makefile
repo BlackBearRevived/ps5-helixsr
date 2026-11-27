@@ -86,7 +86,7 @@ $(MODEL):
 		echo "HelixSR's setup download it under https://github.com/NVIDIA/DLSS/blob/v310.7.0/LICENSE.txt"; exit 1; }
 	rm -rf $(SETUP_OUT) $(SETUP_WORK) && cp -r $(HELIXSR_RELEASE) $(SETUP_OUT)
 	cd $(SETUP_OUT) && $(PYTHON) setup/helixsr_setup.py $(abspath $(SETUP_OUT)) \
-		$(if $(DLSS_DLL),--dlss $(abspath $(DLSS_DLL)),--yes) --dxc $(abspath $(DXC)) --keep $(abspath $(SETUP_WORK)) --no-cache --no-hlx --no-fg
+		$(if $(DLSS_DLL),--dlss $(abspath $(DLSS_DLL)),--yes) --dxc $(abspath $(DXC)) --keep $(abspath $(SETUP_WORK)) --no-cache --no-hlx --no-fg --separate-files
 
 # The planner alone (no Vulkan, no model): what the shader generator asks for its graphs.
 build/helixsr_graph:

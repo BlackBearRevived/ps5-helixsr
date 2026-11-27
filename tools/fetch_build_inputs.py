@@ -129,6 +129,13 @@ def build_template(path):
     needed = [tool, path / "runtime/libc.prx", path / ".deps/native/ps5-payload-sdk/bin/prospero-clang"]
     if not all(p.is_file() for p in needed):
         print("building the native app template's SDK, runtime and tool", flush=True)
+        # Preseed the boilerplate cache from the matching official GitHub release.
+        # Its setup verifies these bytes again against its own pinned zlib digest.
+        archive = download("https://github.com/madler/zlib/releases/download/v1.3.2/zlib-1.3.2.tar.gz",
+                           "bb329a0a2cd0274d05519d61c667c062e06990d72e125ee2dfa8de64f0119d16")
+        zlib = path / ".deps/native/zlib" / archive.name
+        zlib.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(archive, zlib)
         subprocess.run(["bash", "tools/setup-native-dependencies.sh"], cwd=path, check=True)
         subprocess.run(["make", "-C", str(path), "runtime/libc.prx"], check=True)
     missing = [str(p) for p in needed if not p.is_file()]

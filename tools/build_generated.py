@@ -146,7 +146,7 @@ def main():
                 (args.out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
                 print(name+': BUILTIN full-range zero fill',flush=True)
                 continue
-            execute(name+'-generate',[sys.executable,'-u',lib/'regen_kernels.py',args.out/'generated','--only',name])
+            execute(name+'-generate',[sys.executable,'-u',Path(__file__).with_name('generate_model_e_kernel.py'),lib,args.out/'generated',name])
             directory=args.out/'generated'/name
             original=directory/f'{name}.hlsl'
             if name in MASKED_SHUFFLES:
@@ -168,7 +168,7 @@ def main():
             dxc_command=[args.dxc,'-spirv','-fspv-target-env=vulkan1.2','-T','cs_6_6','-E','main',
                          '-enable-16bit-types','-HV','2021','-O3','-D','PX_FAST=1',
                          '-I',runtime,'-I',directory,source,'-Fo',spirv]
-            dxc_result=subprocess.run(list(map(str,dxc_command)),env=env,capture_output=True,text=True,timeout=60)
+            dxc_result=subprocess.run(list(map(str,dxc_command)),env=env,capture_output=True,text=True,timeout=300 if name in ('k7','k11') else 60)
             (args.out/f'{name}-dxc.stdout').write_text(dxc_result.stdout)
             (args.out/f'{name}-dxc.stderr').write_text(dxc_result.stderr)
             record['dxc_stderr']=dxc_result.stderr
