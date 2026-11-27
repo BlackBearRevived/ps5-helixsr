@@ -337,8 +337,15 @@ const uint32_t *packed_kernel(const ps5helixsr_context_desc &desc,
     if (entry[47] || std::strcmp(reinterpret_cast<const char *>(entry), asset.name))
       continue;
     if (span[1] < 20 || span[1] % 4 || span[0] % 4 || span[0] > desc.kernels_bytes ||
-        span[1] > desc.kernels_bytes - span[0] ||
-        sha256_hex(file + span[0], span[1]) != asset.sha256)
+        span[1] > desc.kernels_bytes - span[0])
+      return nullptr;
+    const auto digest = sha256_hex(file + span[0], span[1]);
+    // Model E 3.4.1 drops an unused store in k8. Both exact modules use
+    // the same 18 bindings and uniform layout, so existing packs still work.
+    const bool legacy_k8 =
+        std::strcmp(asset.sha256, "d563438ce1f86bd951f54de2c46980950920d918c6f0ad514ab8b5875ab8d0f9") == 0 &&
+        digest == "6311dc10fab882c1f4bfaf83314608dd79f21402e5cbb24c1b64bd27da5cdb8c";
+    if (digest != asset.sha256 && !legacy_k8)
       return nullptr;
     *words = span[1] / 4;
     return reinterpret_cast<const uint32_t *>(file + span[0]);

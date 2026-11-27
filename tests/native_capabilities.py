@@ -26,7 +26,7 @@ def main():
     assert result["shader_count"] == 19
     assert result["generated_count"] == 13 and result["compact_count"] == 6
     assert result["maximums"] == {
-        "descriptors": 18, "native_used_descriptors": 18,
+        "descriptors": 18, "native_used_descriptors": 17,
         "vgprs": 256, "user_sgprs": 3,
         "lds_bytes": 64, "scratch_bytes": 0,
     }

@@ -76,7 +76,9 @@ The targets, in order (the first six are the steps above):
 `make model` copies the HelixSR release to `build/helixsr-setup` and runs its
 own `setup/helixsr_setup.py` there. That script reads the weights and the CUDA
 kernels (PTX) out of the DLL and writes `helixsr_weights.bin`; its working
-directory, `build/helixsr-setup-work`, keeps the PTX. Without `DLSS_DLL` the
+directory, `build/helixsr-setup-work`, keeps the PTX. The PS5 graph keeps
+one slice per output tile for k7 and k11. The Model E weights match the
+canonical SHA-256, and the 13 generated SPIR-V modules are checked again when packed. Without `DLSS_DLL` the
 setup downloads the DLL from NVIDIA's GitHub; that needs
 `ACCEPT_NVIDIA_DLSS_LICENSE=1`, which is your acceptance of NVIDIA's license.
 

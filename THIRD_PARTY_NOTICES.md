@@ -32,8 +32,9 @@ archive, Copyright 2026 lonewolf0622, under the Apache License 2.0
 ([`third_party/helixsr/LICENSE`](third_party/helixsr/LICENSE)): the host model
 (`model/`), the kernel and sampler tables, the PTX simulator and the FP16
 helper. [`sources.json`](sources.json) pins the release archive and every file.
-The build fetches the same release (`tools/build_inputs.json`) and runs its
-setup and its translator from there.
+Model E generation uses the upstream 3.4.1 setup and translator from the
+separately pinned release archive. The build downloads those tools for local use.
+Their terms are in the [HelixSR 3.4.1 license](https://github.com/lonewolf0622/HelixSR/blob/v3.4.1/LICENSE).
 
 ## NVIDIA DLSS material
 

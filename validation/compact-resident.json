@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "dxc_sha256": "b1bfa493d5c780b94c20b8b5f5aed50d1c4d03339cd55f496bd223eedeec1734",
-  "compiler_sha256": "a80148392f006a96d16afcbb9cb9fe63cc4750d262c7612e37a820469f6d3f20",
+  "dxc_sha256": "3dfc856b76291ffc7e45e21fd37ab80e85b34101de76a03253df6608785c92a0",
+  "compiler_sha256": "c71a8c49b473c08db1ca2cd04c4abdcb56af9c23799337e6939c5279afb6c488",
   "source_hashes": {
-    "tools/conv_kernels.py": "0ec0e5d93bc75a96e9c8907c989451cac226e6e419b0c396ff911b543e73f765",
-    "shaders/encode_e5m3_resident.hlsl": "cce16e65728eeed400ded51bc01f0cc022e9955d050573b3127ff5f3771e8d78",
+    "tools/conv_kernels.py": "a0695e137efd2e4650ca9c386b9c5252fe3d6527b6d6eff46a31c956924db595",
+    "shaders/encode_e5m3_resident.hlsl": "f9405261b68b0da2ff7fd46072280e8e3351c3af0a9b4f26acdeb02c94e71e0b",
     "third_party/helixsr/common/fp16.h": "189e19e4c3a9cb673e55d6f88c4144cb5cf066f4fe5844721daa89c364c74aa8"
   },
   "shaders": [

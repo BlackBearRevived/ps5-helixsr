@@ -6,6 +6,10 @@ and detailed comparisons locally under `build/` or outside the tree. Do not
 publish test receipts or run diaries in this repository, and nothing made from
 NVIDIA's DLL.
 
+The checked-in WARP comparisons and console timings below describe the 1.2.0 baseline.
+For the 3.4.1 Model E setup, the weights and 12 of 13 translated modules retain their
+original digests. The input kernel changes while retaining its binding layout.
+
 ## Acceptance
 
 **Reference.** The original: the HelixSR 1.2.0 DLL itself. It is a drop-in
