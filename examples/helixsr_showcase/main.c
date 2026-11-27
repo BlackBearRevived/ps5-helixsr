@@ -3,7 +3,7 @@
  *
  * PS5 HelixSR Showcase (PPSA99013): a city at dusk, ray cast at a fraction of
  * the output size and upscaled by ps5_helixsr. It is the PS5 FSR4 Showcase of
- * https://github.com/blackbearreloaded/ps5-fsr4 with the upscaler replaced.
+ * https://github.com/BlackBearRevived/ps5-fsr4 with the upscaler replaced.
  * The settings menu chooses what is shown and how:
  *
  *   - the six render and output sizes of the README's performance table, or

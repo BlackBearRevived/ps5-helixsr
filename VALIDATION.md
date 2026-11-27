@@ -54,7 +54,7 @@ the network quantizes activations to 8-bit E5M3 codes between stages, which
 turns a last-bit difference into a code step. The rule therefore asks that the
 PS5 be as close to the original as the same runtime on an independent,
 conformant Vulkan driver. It is the rule of
-[ps5-fsr4](https://github.com/blackbearreloaded/ps5-fsr4/blob/main/VALIDATION.md#fsr4-acceptance),
+[ps5-fsr4](https://github.com/BlackBearRevived/ps5-fsr4/blob/main/VALIDATION.md#fsr4-acceptance),
 margin included.
 
 **Scenarios and results.** The PSNR columns give the lowest and the highest
@@ -132,7 +132,7 @@ Run one scenario on each side, then check it:
 
 `<reference runtime>` is the folder with WARP, the Agility SDK and the Wine
 development files that
-[ps5-fsr4's reference procedure](https://github.com/blackbearreloaded/ps5-fsr4/blob/main/docs/FSR4_REFERENCE_RUNTIME.md)
+[ps5-fsr4's reference procedure](https://github.com/BlackBearRevived/ps5-fsr4/blob/main/docs/FSR4_REFERENCE_RUNTIME.md)
 prepares. Deploy the runner's `PPSA89012` folder to the locally configured
 console; it runs every case, writes `NAME-NN.rgba16f` into its `results`
 folder and closes itself. A case takes `DIR::::1` for automatic exposure, and

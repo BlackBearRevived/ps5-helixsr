@@ -86,4 +86,4 @@ Fetched or installed, never stored here:
   Mesa's license;
 - for the reference runs only: the HelixSR release DLL, AMD's FidelityFX API
   headers (MIT) and Microsoft's WARP and Agility SDK redistributables, prepared
-  as [ps5-fsr4 describes](https://github.com/blackbearreloaded/ps5-fsr4/blob/main/docs/FSR4_REFERENCE_RUNTIME.md).
+  as [ps5-fsr4 describes](https://github.com/BlackBearRevived/ps5-fsr4/blob/main/docs/FSR4_REFERENCE_RUNTIME.md).
