@@ -16,12 +16,12 @@ VULKAN_CFLAGS = -I$(DRIVER)/third_party/vulkan-headers/include
 
 # Pinned public inputs (make inputs) and what HelixSR's setup makes from NVIDIA's DLL (make model).
 INPUTS ?= build/inputs
-DXC ?= $(INPUTS)/dxc/bin/dxc
+DXC ?= $(INPUTS)/dxc-2609/bin/dxc
 SPIRV_OPT ?= $(shell command -v spirv-opt)
-HELIXSR_RELEASE ?= $(INPUTS)/helixsr
+HELIXSR_RELEASE ?= $(INPUTS)/helixsr-3.4.1
 SETUP_OUT ?= build/helixsr-setup
 SETUP_WORK ?= build/helixsr-setup-work
-MODEL ?= $(SETUP_OUT)/helixsr_weights.bin
+MODEL ?= $(SETUP_OUT)/HelixSR/helixsr_weights.bin
 PTX ?= $(SETUP_WORK)/ptx
 GENERATED ?= build/main-inventory
 RESIDENT ?= build/compact-resident
@@ -78,6 +78,7 @@ build/compile_probe: tools/compile_probe.c | $(DRIVER)/Makefile $(DRIVER)/build/
 # DLSS_DLL=/path/to/nvngx_dlss.dll uses a local copy; without one the setup downloads the DLL
 # from NVIDIA's GitHub, which needs ACCEPT_NVIDIA_DLSS_LICENSE=1.
 model: $(MODEL)
+	@echo "762adfde720035f7ac43910846e0ce6826c239bcd41f863196f77c547ae57153  $(MODEL)" | sha256sum --check
 $(MODEL):
 	test -f $(HELIXSR_RELEASE)/setup/helixsr_setup.py || { echo "run make inputs first"; exit 1; }
 	test -n "$(DLSS_DLL)" || test "$(ACCEPT_NVIDIA_DLSS_LICENSE)" = 1 || { \
@@ -85,7 +86,7 @@ $(MODEL):
 		echo "HelixSR's setup download it under https://github.com/NVIDIA/DLSS/blob/v310.7.0/LICENSE.txt"; exit 1; }
 	rm -rf $(SETUP_OUT) $(SETUP_WORK) && cp -r $(HELIXSR_RELEASE) $(SETUP_OUT)
 	cd $(SETUP_OUT) && $(PYTHON) setup/helixsr_setup.py $(abspath $(SETUP_OUT)) \
-		$(if $(DLSS_DLL),--dlss $(abspath $(DLSS_DLL)),--yes) --dxc $(abspath $(DXC)) --keep $(abspath $(SETUP_WORK))
+		$(if $(DLSS_DLL),--dlss $(abspath $(DLSS_DLL)),--yes) --dxc $(abspath $(DXC)) --keep $(abspath $(SETUP_WORK)) --no-cache --no-hlx --no-fg
 
 # The planner alone (no Vulkan, no model): what the shader generator asks for its graphs.
 build/helixsr_graph:
@@ -153,3 +154,8 @@ runner:
 showcase:
 	PS5VK_SDK=$(abspath $(DRIVER))/dist-sdk $(PYTHON) tools/build_showcase.py \
 		--generated-dir $(GENERATED)/generated --compact-dir $(RESIDENT) $(SHOWCASE_ARGS)
+
+
+.PHONY: showcase-pkg
+showcase-pkg: showcase
+	bash tools/build-showcase-pkg.sh build/showcase/PPSA99013 build/showcase/PPSA99013.pkg

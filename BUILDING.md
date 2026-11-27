@@ -46,11 +46,11 @@ not upload it, attach it or pass it on.
 - `make inputs` fetches the pinned public inputs of `tools/build_inputs.json`
   into `build/inputs`: [PS5 Native App Boilerplate 1.000.000](https://github.com/BlackBearRevived/ps5-native-app-boilerplate/releases/tag/1.000.000)
   with its payload SDK, Microsoft's
-  DXC and the HelixSR 1.2.0 release. Then
+  DXC 1.9.2609 and the official HelixSR 3.4.1 setup for Model E. Then
   `eval "$(python3 tools/fetch_build_inputs.py --env)"` points the PS5 builds
   at them (`PS5_PAYLOAD_SDK`, `PS5_NATIVE_APP_TEMPLATE`, `PS5VK_LAB_ROOT`).
 - NVIDIA's `nvngx_dlss.dll`, version 310.7.0 (SHA-256 `be6e434a…`): the one
-  HelixSR 1.2.0 is made for. NVIDIA publishes it at
+  the Model E setup expects. NVIDIA publishes it at
   [github.com/NVIDIA/DLSS](https://github.com/NVIDIA/DLSS) under
   [its license](https://github.com/NVIDIA/DLSS/blob/v310.7.0/LICENSE.txt).
 - For running the network on the host: a Vulkan driver with 32-lane subgroups
@@ -69,6 +69,7 @@ The targets, in order (the first six are the steps above):
 | `make compact-shaders` | the public-source shaders needed to build the showcase |
 | `make network-files` | `model.bin` and `kernels.bin`, the two files the app reads |
 | `make showcase` | the app, PPSA99013; it builds without the network and takes the two files as options |
+| `make showcase-pkg` | Build and verify the installable `build/showcase/PPSA99013.pkg` and write its SHA-256 checksum. |
 | `make host` | the runtime, the frame runners and the tests for desktop Vulkan |
 | `make check` | host tests |
 

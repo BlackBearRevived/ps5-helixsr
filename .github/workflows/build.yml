@@ -72,7 +72,7 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             bison bsdextrautils build-essential ca-certificates ccache clang-18 clang-21 cmake file flex fonts-dejavu-core \
             git glslang-tools lld-18 lld-21 llvm-21 make ninja-build pkg-config python3 \
-            python3-mako python3-numpy python3-pil python3-yaml spirv-tools unzip wget xz-utils zstd
+            python3-venv python3-mako python3-numpy python3-pil python3-yaml spirv-tools unzip wget xz-utils zstd
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           toolchain=$(dpkg-query -W -f='${Package}=${Version}\n' \
             gcc g++ clang-18 clang-21 lld-18 lld-21 glslang-tools spirv-tools | sha256sum | cut -d ' ' -f 1)
@@ -136,9 +136,10 @@ jobs:
           assert metadata['localizedParameters']['en-US']['titleName'] == 'PS5 HelixSR Showcase'
           PY
           python3 "$PS5_NATIVE_APP_TEMPLATE/tools/package-app.py" "$app" build/showcase/PPSA99013.zip
+          bash tools/build-showcase-pkg.sh "$app" build/showcase/PPSA99013.pkg
           cd build/showcase
           sha256sum PPSA99013.zip > PPSA99013.zip.sha256
-          sha256sum --check PPSA99013.zip.sha256
+          sha256sum --check PPSA99013.zip.sha256 PPSA99013.pkg.sha256
 
       - name: Save the shared cache from main
         if: github.ref == 'refs/heads/main' && steps.driver-cache.outputs.cache-hit != 'true'
@@ -149,13 +150,15 @@ jobs:
             build/compact-resident
           key: ${{ steps.driver-cache.outputs.cache-primary-key }}
 
-      - name: Attest the showcase ZIP
+      - name: Attest the showcase ZIP and PKG
         if: github.event_name != 'pull_request' && github.event_name != 'schedule'
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
-          subject-path: build/showcase/PPSA99013.zip
+          subject-path: |
+            build/showcase/PPSA99013.zip
+            build/showcase/PPSA99013.pkg
 
-      - name: Upload the showcase ZIP and checksum
+      - name: Upload both showcases and checksums
         if: github.event_name != 'schedule'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -163,6 +166,8 @@ jobs:
           path: |
             build/showcase/PPSA99013.zip
             build/showcase/PPSA99013.zip.sha256
+            build/showcase/PPSA99013.pkg
+            build/showcase/PPSA99013.pkg.sha256
           if-no-files-found: error
           compression-level: 0
           retention-days: 7

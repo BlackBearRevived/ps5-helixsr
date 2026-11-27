@@ -20,5 +20,10 @@
     "bytes": 1903872,
     "sha256": "762adfde720035f7ac43910846e0ce6826c239bcd41f863196f77c547ae57153",
     "included": false
+  },
+  "model_e_setup": {
+    "version": "3.4.1",
+    "release": "https://github.com/lonewolf0622/HelixSR/releases/tag/v3.4.1",
+    "archive_sha256": "31ab3fcee0aa385712c123c6717dc579c60aeaeff40f705dbe91753f96ac46da"
   }
 }

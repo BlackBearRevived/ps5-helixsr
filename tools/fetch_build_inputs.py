@@ -8,7 +8,7 @@ Everything lands in the ignored build tree, where the Makefile looks for it:
 - the native app template at its pinned commit, built once: its host tool, the
   payload SDK it pins and the libc.prx it generates from source;
 - dxc and libdxcompiler.so from Microsoft's DXC release;
-- the HelixSR 1.2.0 release, extracted: its setup builds the network on this
+- the HelixSR 3.4.1 release, extracted: its setup builds the network on this
   machine from NVIDIA's DLSS DLL (make model).
 
 NVIDIA's DLL is not fetched here. make model takes a local copy (DLSS_DLL=...)

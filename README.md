@@ -23,7 +23,7 @@ frame on the right.*
 > **HelixSR is the work of [lonewolf0622](https://github.com/lonewolf0622/HelixSR)**:
 > the translation of NVIDIA's network kernels to compute shaders, the host model
 > that plans them and the arithmetic that makes them fast on AMD hardware. This
-> project is built on the setup components HelixSR 1.2.0 publishes.
+> project pairs the Apache-licensed 1.2.0 graph implementation with the 3.4.1 Model E setup.
 > **NVIDIA created DLSS and the Model E network.** BlackBearReloaded's
 > contribution here is the native PS5 adaptation, integration and validation.
 > See [full credits and provenance](THIRD_PARTY_NOTICES.md#helixsr-and-dlss-credits).
@@ -53,6 +53,11 @@ with the same showcase app, so the two upscalers can be set side by side.
 - One C header, `include/ps5helixsr/ps5_helixsr.h`: a context per render and
   output size, and a dispatch that records into the application's command
   buffer ([the runtime](docs/SDK.md)).
+
+
+The showcase CI artifact includes the folder ZIP, an installable PS5 PKG, and
+a SHA-256 checksum for each. Both public packages open in bilinear mode. For
+Model E, use the HelixSR 3.4.1 setup locally as described in [BUILDING.md](BUILDING.md).
 
 ## Performance
 

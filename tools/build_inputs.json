@@ -2,24 +2,23 @@
   "schema": 1,
   "app_template": {
     "repository": "https://github.com/BlackBearRevived/ps5-native-app-boilerplate.git",
-    "commit": "c7102ddd1a31ec2f3e2c9c6a3490491bef4d0af0",
+    "commit": "7d3b97577f7d2e05c150e01300f3d399f5a647c7",
     "path": "build/inputs/lab/third_party/ps5-native-app-boilerplate"
   },
   "dxc": {
-    "url": "https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.9.2607/linux_dxc_2026_07_29.x86_x64.tar.gz",
-    "sha256": "55665c87824051ed4774ff3280a79ccbbb7d39243b9736ca5e98222134112d54",
+    "url": "https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.9.2609/linux_dxc_2026_09_28.x86_x64.tar.gz",
+    "sha256": "96faadc7f5c282d2ffda49804beb4c3ee38127bc252b723234e3c5cdf7aa39a1",
     "members": [
       "bin/dxc",
       "lib/libdxcompiler.so",
-      "LICENCE-MIT.txt",
       "LICENSE-LLVM.txt",
       "LICENSE-MS.txt"
     ],
-    "path": "build/inputs/dxc"
+    "path": "build/inputs/dxc-2609"
   },
   "helixsr": {
-    "url": "https://github.com/lonewolf0622/HelixSR/releases/download/v1.2.0/HelixSR-1.2.0.zip",
-    "sha256": "7c9aeac2e3dcd73f6e9b2dd8b04c41a828fd8e1a8fe30a2ac77787097ddbeb0e",
-    "path": "build/inputs/helixsr"
+    "url": "https://github.com/lonewolf0622/HelixSR/releases/download/v3.4.1/HelixSR-3.4.1.zip",
+    "sha256": "31ab3fcee0aa385712c123c6717dc579c60aeaeff40f705dbe91753f96ac46da",
+    "path": "build/inputs/helixsr-3.4.1"
   }
 }
